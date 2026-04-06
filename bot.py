@@ -13,6 +13,11 @@ TOKEN = os.getenv("BOT_API")
 if not TOKEN:
     raise ValueError("BOT_API environment variable topilmadi!")
 
+print("TOKEN:", TOKEN)
+print("Current dir:", os.getcwd())
+
+
+
 # ================== LOGGING ==================
 logging.basicConfig(level=logging.INFO)
 
@@ -23,10 +28,10 @@ dp = Dispatcher()
 # ================== YT-DLP FUNCTION ==================
 def download_video(url: str) -> str:
     ydl_opts = {
-        'outtmpl': 'downloads/%(title)s.%(ext)s',
-        'format': 'best',
-        'noplaylist': True,
-        'quiet': True,
+    'outtmpl': '/tmp/%(title)s.%(ext)s',  # /tmp folder ishlatiladi
+    'format': 'best',
+    'noplaylist': True,
+    'quiet': True,
     }
 
     os.makedirs("downloads", exist_ok=True)
