@@ -2,39 +2,39 @@ import os
 import logging
 import asyncio
 from aiogram import Bot, Dispatcher, types
-from aiogram.types import Message
 from aiogram.filters import CommandStart
+from aiogram.client.bot import DefaultBotProperties
 from aiogram.enums import ParseMode
 import yt_dlp
 
 # ================== CONFIG ==================
 TOKEN = os.getenv("BOT_API")
-
 if not TOKEN:
     raise ValueError("BOT_API environment variable topilmadi!")
 
 print("TOKEN:", TOKEN)
 print("Current dir:", os.getcwd())
 
-
-
 # ================== LOGGING ==================
 logging.basicConfig(level=logging.INFO)
 
-# ================== INIT ==================
-bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)
+# ================== INIT BOT ==================
+bot = Bot(
+    token=TOKEN,
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
 dp = Dispatcher()
 
 # ================== YT-DLP FUNCTION ==================
 def download_video(url: str) -> str:
     ydl_opts = {
-    'outtmpl': '/tmp/%(title)s.%(ext)s',  # /tmp folder ishlatiladi
-    'format': 'best',
-    'noplaylist': True,
-    'quiet': True,
+        'outtmpl': '/tmp/%(title)s.%(ext)s',  # /tmp ishlatiladi
+        'format': 'best',
+        'noplaylist': True,
+        'quiet': True,
     }
 
-    os.makedirs("downloads", exist_ok=True)
+    os.makedirs("/tmp", exist_ok=True)
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
@@ -43,7 +43,7 @@ def download_video(url: str) -> str:
 
 # ================== HANDLERS ==================
 @dp.message(CommandStart())
-async def start_handler(message: Message):
+async def start_handler(message: types.Message):
     await message.answer(
         "👋 Salom!\n\n"
         "Menga YouTube / TikTok / Instagram link yuboring.\n"
@@ -51,7 +51,7 @@ async def start_handler(message: Message):
     )
 
 @dp.message()
-async def download_handler(message: Message):
+async def download_handler(message: types.Message):
     url = message.text.strip()
 
     if not url.startswith("http"):
